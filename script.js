@@ -27,7 +27,8 @@ function readInput(keyPressed){
     
     
 
-    if(isOperator == false &&  isEqualbtn == false && isClearbtn == false && stage == 0 ){            
+    if(isOperator == false &&  isEqualbtn == false && isClearbtn == false && stage == 0 ){
+                    
         input1 = input1+keyPressed;
         if(checkOverflow(input1) == true){
             updateCalcScreen('Overflow');
@@ -42,7 +43,7 @@ function readInput(keyPressed){
         stage= 1;
     } 
     else if(isOperator == false && isEqualbtn  == false && isClearbtn == false && stage == 1){
-        input2 = "";        
+               
         input2 = input2+keyPressed;       
                   // reading 2nd input
         if(checkOverflow(input2) == true){
