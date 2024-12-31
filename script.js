@@ -1,28 +1,99 @@
-function add (num1, num2){
-    let sum = num1 + num2;
-    return sum;
+let input1 = "";
+let input2 = "";
+let operator = "";
+let stage = 0;
+
+const oprations = ['+','-','/','*'];
+const btns = document.querySelectorAll('button');
+
+btns.forEach((target) => {
+    target.addEventListener('click', () => {
+        let keyPressed = target.value;
+        readInput(keyPressed);
+    });
+});
+
+function checkOverflow(res){
+    let str = res.toString();
+    return str.length > 8 ? true :false ;
 }
 
-function subtract(num1 , num2){
-    let diff = num1 - num2;
-    return diff;
-}
+function readInput(keyPressed){
+    let isOperator = oprations.includes(keyPressed);
+    let isEqualbtn = keyPressed == "=";
+    let isClearbtn = keyPressed == "clear";
 
-function multiply(num1, num2){
-    let product = num1 * num2;
-    return product;
-}
 
-function divide(num1, num2){
-    let quotient = num1/num2;
-    return quotient;
-}
+    if(!isOperator && stage == 0 && !isEqualbtn && !isClearbtn){            
+        input1 = input1+keyPressed;
+        if(checkOverflow(input1) == true){
+            updateCalcScreen('Overflow');
+            input1 = "";    
+        }
+        else{
+            updateCalcScreen(input1);
+        }        
+    } 
+    else if(isOperator && stage == 0 && !isClearbtn){
+        operator = keyPressed;
+        stage++;
+    } 
+    else if(!isOperator && stage == 1 && !isEqualbtn && !isClearbtn){
+        input2 = input2+keyPressed;            
+                  // reading 2nd input
+        if(checkOverflow(input2) == true){
+            updateCalcScreen('Overflow');
+            input2 = "";    
+        }
+        else{
+            updateCalcScreen(input2);
+        } 
+    }
 
+    else if(isEqualbtn && stage == 1 && !isClearbtn){
+        let res = operate(input1, input2, operator);
+        if(checkOverflow(res) == true){
+            updateCalcScreen('Overflow');
+            input1 = "";
+            input2 = "";
+            res = ""; 
+        } 
+        else{
+            stage = 0;
+            updateCalcScreen(res);
+            input1 = res;
+            input2 = "";
+        }        
+    }
+    else if( isClearbtn ){
+        input1 = "";
+        input2 = "";
+        stage = "";
+        res = ""; 
+        updateCalcScreen(0);
+    }
+    else if( isOperator && stage == 1){
+        let res = operate(input1, input2, operator);
+        if(checkOverflow(res) == true){
+            updateCalcScreen('Overflow');
+            input1 = 0;
+            input2 = 0;
+            res = 0; 
+        } 
+        else{
+            stage = 0;
+            updateCalcScreen(res);
+            input1 = res;
+            input2 = "";
+        } 
+    }
+}
 
 function operate(num1, num2, operator){
     let result;
     num1 = parseInt(num1);    
     num2 = parseInt(num2);
+    
     switch(operator){
         case '+':
             result = add(num1,num2);
@@ -46,49 +117,27 @@ function operate(num1, num2, operator){
     return result;
 }
 
-let input1 = "";
-let input2 = "";
-let operator = "";
-let stage = 0;
-const oprations = ['+','-','/','*'];
-const btns = document.querySelectorAll('button');
-btns.forEach((target) => {
-    target.addEventListener('click',() => {
-        let isOperator = oprations.includes(target.value);
-        let isEqualbtn = target.value == "=";
-        let isClearbtn = target.value == "clear";
-        debugger
-        if(!isOperator && stage == 0 && !isEqualbtn && !isClearbtn){            
-            input1 = input1+target.value;
-            updateCalcScreen(input1);
-        } 
-        else if(isOperator && stage == 0 && !isClearbtn){
-            operator = target.value;
-            stage++;
-        } 
-        else if(!isOperator && stage == 1 && !isEqualbtn && !isClearbtn){
-            input2 = input2+target.value;            
-            updateCalcScreen(input2);           
-        }
-        else if(isEqualbtn && stage == 1 && !isClearbtn){
-            let res = operate(input1, input2, operator); 
-            stage = 0;
-            updateCalcScreen(res);
-            input1 = res;
-            input2 = "";
-        }
-        else if( isClearbtn ){
-            input1 = "";
-            input2 = "";
-            stage = "";
-            res = ""; 
-            updateCalcScreen(0);
-        }
-
-    });
-});
-
 function updateCalcScreen(str){
     const display = document.querySelector('.display p');
     display.textContent = str;   
+}
+
+function add (num1, num2){
+    let sum = num1 + num2;
+    return sum;
+}
+
+function subtract(num1 , num2){
+    let diff = num1 - num2;
+    return diff;
+}
+
+function multiply(num1, num2){
+    let product = num1 * num2;
+    return product;
+}
+
+function divide(num1, num2){
+    let quotient = num1/num2;
+    return quotient.toFixed(2);
 }
