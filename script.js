@@ -2,14 +2,16 @@ let input1 = "";
 let input2 = "";
 let operator = "";
 let stage = 0;
+let prevKey = "";
 
 const oprations = ['+','-','/','*'];
-const btns = document.querySelectorAll('button');
+const btns = document.querySelectorAll('button');   
 
 btns.forEach((target) => {
     target.addEventListener('click', () => {
         let keyPressed = target.value;
         readInput(keyPressed);
+        
     });
 });
 
@@ -22,9 +24,10 @@ function readInput(keyPressed){
     let isOperator = oprations.includes(keyPressed);
     let isEqualbtn = keyPressed == "=";
     let isClearbtn = keyPressed == "clear";
+    
+    
 
-
-    if(!isOperator && stage == 0 && !isEqualbtn && !isClearbtn){            
+    if(isOperator == false &&  isEqualbtn == false && isClearbtn == false && stage == 0 ){            
         input1 = input1+keyPressed;
         if(checkOverflow(input1) == true){
             updateCalcScreen('Overflow');
@@ -34,12 +37,13 @@ function readInput(keyPressed){
             updateCalcScreen(input1);
         }        
     } 
-    else if(isOperator && stage == 0 && !isClearbtn){
+    else if(isOperator == true &&  isClearbtn == false && stage == 0 ){
         operator = keyPressed;
-        stage++;
+        stage= 1;
     } 
-    else if(!isOperator && stage == 1 && !isEqualbtn && !isClearbtn){
-        input2 = input2+keyPressed;            
+    else if(isOperator == false && isEqualbtn  == false && isClearbtn == false && stage == 1){
+        input2 = "";        
+        input2 = input2+keyPressed;       
                   // reading 2nd input
         if(checkOverflow(input2) == true){
             updateCalcScreen('Overflow');
@@ -50,7 +54,7 @@ function readInput(keyPressed){
         } 
     }
 
-    else if(isEqualbtn && stage == 1 && !isClearbtn){
+    else if(isEqualbtn == true && stage == 1 && isClearbtn == false){
         let res = operate(input1, input2, operator);
         if(checkOverflow(res) == true){
             updateCalcScreen('Overflow');
@@ -59,20 +63,21 @@ function readInput(keyPressed){
             res = ""; 
         } 
         else{
-            stage = 0;
-            updateCalcScreen(res);
+            stage = 0;            
             input1 = res;
             input2 = "";
+            updateCalcScreen(res);
         }        
     }
-    else if( isClearbtn ){
+    else if( isClearbtn == true){
         input1 = "";
         input2 = "";
         stage = "";
         res = ""; 
         updateCalcScreen(0);
     }
-    else if( isOperator && stage == 1){
+    else if( isOperator == true && stage == 1){
+        debugger;
         let res = operate(input1, input2, operator);
         if(checkOverflow(res) == true){
             updateCalcScreen('Overflow');
@@ -81,10 +86,12 @@ function readInput(keyPressed){
             res = 0; 
         } 
         else{
-            stage = 0;
-            updateCalcScreen(res);
-            input1 = res;
+            input1 = res;         
+            updateCalcScreen(res);   
             input2 = "";
+            operator = keyPressed;
+            stage = 1;           
+            
         } 
     }
 }
